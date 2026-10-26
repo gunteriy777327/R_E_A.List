@@ -15,6 +15,8 @@ import { inspectApkSignatureInputSchema } from "../../../src/domain/apkSignature
 import { PeResourcesProvider } from "../../../src/native/pe/PeResourcesProvider.js";
 import { PeCertificatesProvider } from "../../../src/native/pe/PeCertificatesProvider.js";
 import { PeImportsProvider } from "../../../src/native/pe/PeImportsProvider.js";
+import { ComTypelibProvider } from "../../../src/native/com/ComTypelibProvider.js";
+import { inspectComTypelibInputSchema } from "../../../src/domain/native/comTypelib.js";
 import { ElfNotesProvider } from "../../../src/native/elf/ElfNotesProvider.js";
 import { KernelModuleProvider } from "../../../src/native/elf/KernelModuleProvider.js";
 import { NativeExportsProvider } from "../../../src/native/exports/NativeExportsProvider.js";
@@ -57,6 +59,19 @@ const cases = [
       return {
         inspect: (path: string, signal: AbortSignal) =>
           provider.inspect(inspectPeImportsInputSchema.parse({ path }), {
+            signal,
+          }),
+        close: () => provider.close(),
+      };
+    },
+  },
+  {
+    name: "COM type libraries",
+    make: () => {
+      const provider = new ComTypelibProvider();
+      return {
+        inspect: (path: string, signal: AbortSignal) =>
+          provider.inspect(inspectComTypelibInputSchema.parse({ path }), {
             signal,
           }),
         close: () => provider.close(),

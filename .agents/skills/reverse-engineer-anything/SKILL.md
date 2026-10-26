@@ -262,6 +262,14 @@ explicit path or endpoint and do not need it.
   proof the image never imported APIs through another table. Bound snapshots
   and loaded IAT contents remain unobserved. See the
   [PE import guide](https://github.com/morluto/rea/blob/main/docs/pe-imports.md).
+- COM automation surface: `inspect_com_typelib` with an explicit local
+  `.tlb`/`.olb` file or a PE image with `TYPELIB` resources. The server is not
+  loaded or registered. Start with `include_members: false` for large
+  libraries, then select `type_names`. Preserve LIBIDs, CLSIDs, IIDs, DISPIDs,
+  parameter flags and the reported string code page; pass `code_page` (for
+  example 1251) when a neutral-LCID library decodes help strings wrongly.
+  ProgIDs appear only when an embedded REGISTRY script declares them. See the
+  [COM type-library guide](https://github.com/morluto/rea/blob/main/docs/com-typelib.md).
 - PE TLS callbacks and load configuration: `inspect_pe_load_config` with the
   explicit local PE32/PE32+ file. This built-in target-free inspection requires
   no Windows SDK. Preserve callback VAs as strings with their RVA, file offset

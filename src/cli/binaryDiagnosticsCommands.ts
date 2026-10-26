@@ -14,6 +14,7 @@ import {
   createPeResourcesService,
   createPeCertificatesService,
   createPeImportsService,
+  createComTypelibService,
   createNativeExportsService,
 } from "../composition/binaryDiagnostics.js";
 import { CLI_COMMANDS } from "../cliCommandNames.js";
@@ -26,6 +27,7 @@ import { inspectRecordedCrashInputSchema } from "../domain/native/recordedCrash.
 import { inspectPeResourcesInputSchema } from "../domain/native/peResources.js";
 import { inspectPeCertificatesInputSchema } from "../domain/native/peCertificates.js";
 import { inspectPeImportsInputSchema } from "../domain/native/peImports.js";
+import { inspectComTypelibInputSchema } from "../domain/native/comTypelib.js";
 import { inspectNativeExportsInputSchema } from "../domain/native/nativeExports.js";
 import { inspectElfNotesInputSchema } from "../domain/native/elfNotes.js";
 import { inspectAppleIpsInputSchema } from "../domain/native/appleIps.js";
@@ -299,6 +301,64 @@ export const registerBinaryDiagnosticsCommands = (
               pe,
               "rea-pe-imports",
               "inspect_pe_imports",
+              signal,
+            ),
+        );
+      }),
+  });
+  cli.command(CLI_COMMANDS.inspectComTypelib, {
+    description:
+      "Inventory COM type libraries in a .tlb/.olb file or PE TYPELIB resources without loading or registering the server",
+    args: z.object({
+      path: z
+        .string()
+        .describe("Local .tlb/.olb type library or PE32/PE32+ image"),
+    }),
+    options: z.object({
+      maxFileBytes: inspectComTypelibInputSchema.shape.max_file_bytes,
+      maxEntries: inspectComTypelibInputSchema.shape.max_entries,
+      maxMembers: inspectComTypelibInputSchema.shape.max_members,
+      summary: z
+        .boolean()
+        .default(false)
+        .describe("Report the type inventory without functions or variables"),
+      typeName: z
+        .array(z.string().min(1).max(1024))
+        .max(256)
+        .optional()
+        .describe(
+          "Report members only for this type name, case-insensitive (repeatable)",
+        ),
+      codePage: inspectComTypelibInputSchema.shape.code_page,
+    }),
+    run: ({ args, options }) =>
+      withCommandCancellation(async (signal) => {
+        const typelib = createComTypelibService();
+        return await logCliCommand(
+          logger,
+          CLI_COMMANDS.inspectComTypelib,
+          async () =>
+            finishAnalysisCommand(
+              () =>
+                typelib.inspect(
+                  {
+                    path: absoluteCallerPath(args.path),
+                    max_file_bytes: options.maxFileBytes,
+                    max_entries: options.maxEntries,
+                    max_members: options.maxMembers,
+                    include_members: !options.summary,
+                    ...(options.typeName === undefined
+                      ? {}
+                      : { type_names: options.typeName }),
+                    ...(options.codePage === undefined
+                      ? {}
+                      : { code_page: options.codePage }),
+                  },
+                  { signal },
+                ),
+              typelib,
+              "rea-com-typelib",
+              "inspect_com_typelib",
               signal,
             ),
         );

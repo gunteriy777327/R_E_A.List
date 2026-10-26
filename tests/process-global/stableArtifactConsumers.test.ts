@@ -113,6 +113,8 @@ import { AppleIpsProvider } from "../../src/native/apple/AppleIpsProvider.js";
 import { KernelModuleProvider } from "../../src/native/elf/KernelModuleProvider.js";
 import { PeCertificatesProvider } from "../../src/native/pe/PeCertificatesProvider.js";
 import { PeImportsProvider } from "../../src/native/pe/PeImportsProvider.js";
+import { ComTypelibProvider } from "../../src/native/com/ComTypelibProvider.js";
+import { inspectComTypelibInputSchema } from "../../src/domain/native/comTypelib.js";
 import { NativeExportsProvider } from "../../src/native/exports/NativeExportsProvider.js";
 import { BeamProvider } from "../../src/erlang/BeamProvider.js";
 import { inspectElfNotesInputSchema } from "../../src/domain/native/elfNotes.js";
@@ -1001,6 +1003,7 @@ const stableArtifactProviders = [
   ["PE certificates", () => new PeCertificatesProvider()],
   ["PE load configuration", () => new PeLoadConfigProvider()],
   ["PE imports", () => new PeImportsProvider()],
+  ["COM type libraries", () => new ComTypelibProvider()],
   ["native exports", () => new NativeExportsProvider()],
   ["Python pyc", () => new PythonPycProvider()],
 ] as const;
@@ -1049,6 +1052,11 @@ const inspectFileFailure = (
   if (provider instanceof PeImportsProvider)
     return provider.inspect(
       inspectPeImportsInputSchema.parse({ path }),
+      options,
+    );
+  if (provider instanceof ComTypelibProvider)
+    return provider.inspect(
+      inspectComTypelibInputSchema.parse({ path }),
       options,
     );
   if (provider instanceof NativeExportsProvider)

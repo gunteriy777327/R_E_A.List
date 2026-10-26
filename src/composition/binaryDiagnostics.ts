@@ -12,6 +12,8 @@ import { PeCertificatesService } from "../application/binaryDiagnostics/PeCertif
 import { PeCertificatesProvider } from "../native/pe/PeCertificatesProvider.js";
 import { PeImportsService } from "../application/binaryDiagnostics/PeImportsService.js";
 import { PeImportsProvider } from "../native/pe/PeImportsProvider.js";
+import { ComTypelibService } from "../application/binaryDiagnostics/ComTypelibService.js";
+import { ComTypelibProvider } from "../native/com/ComTypelibProvider.js";
 import { ElfNotesService } from "../application/binaryDiagnostics/ElfNotesService.js";
 import { ElfNotesProvider } from "../native/elf/ElfNotesProvider.js";
 import { AppleIpsService } from "../application/binaryDiagnostics/AppleIpsService.js";
@@ -40,6 +42,10 @@ export const createPeCertificatesService = (): PeCertificatesService =>
 /** Portable PE import-table inspection with no engine or catalog verification. */
 export const createPeImportsService = (): PeImportsService =>
   new PeImportsService(new PeImportsProvider());
+
+/** Portable COM type-library inventory with no COM runtime, registration or engine. */
+export const createComTypelibService = (): ComTypelibService =>
+  new ComTypelibService(new ComTypelibProvider());
 
 /** Portable PE/ELF export tables with no engine, toolchain or target acquisition. */
 export const createNativeExportsService = (): NativeExportsService =>

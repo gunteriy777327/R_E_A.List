@@ -34,6 +34,7 @@ import {
   createPeLoadConfigService,
   createPeCertificatesService,
   createPeImportsService,
+  createComTypelibService,
   createNativeExportsService,
   createPeResourcesService,
   createRecordedCrashService,
@@ -47,6 +48,7 @@ import type { KernelModuleService } from "../application/binaryDiagnostics/Kerne
 import type { PeLoadConfigService } from "../application/binaryDiagnostics/PeLoadConfigService.js";
 import type { PeCertificatesService } from "../application/binaryDiagnostics/PeCertificatesService.js";
 import type { PeImportsService } from "../application/binaryDiagnostics/PeImportsService.js";
+import type { ComTypelibService } from "../application/binaryDiagnostics/ComTypelibService.js";
 import type { PeResourcesService } from "../application/binaryDiagnostics/PeResourcesService.js";
 import type { NativeExportsService } from "../application/binaryDiagnostics/NativeExportsService.js";
 import { registerElfNotesTool } from "./registerElfNotesTool.js";
@@ -55,6 +57,7 @@ import { registerKernelModuleTool } from "./registerKernelModuleTool.js";
 import { registerPeLoadConfigTool } from "./registerPeLoadConfigTool.js";
 import { registerPeCertificatesTool } from "./registerPeCertificatesTool.js";
 import { registerPeImportsTool } from "./registerPeImportsTool.js";
+import { registerComTypelibTool } from "./registerComTypelibTool.js";
 import { registerPeResourcesTool } from "./registerPeResourcesTool.js";
 import { registerNativeExportsTool } from "./registerNativeExportsTool.js";
 import type { EvmInterfaceService } from "../application/evm/EvmInterfaceService.js";
@@ -486,6 +489,7 @@ export const createServer = (
   const peLoadConfig = createPeLoadConfigService();
   const peCertificates = createPeCertificatesService();
   const peImports = createPeImportsService();
+  const comTypelib = createComTypelibService();
   const electronFuses = options.electronFuses ?? createElectronFuseService();
   const pythonPyc = options.pythonPyc ?? createPythonPycService();
   const webNetworkCapture =
@@ -613,6 +617,7 @@ export const createServer = (
       peLoadConfig.close(),
       peCertificates.close(),
       peImports.close(),
+      comTypelib.close(),
       electronFuses.close(),
       pythonPyc.close(),
       webNetworkCapture.close(),
@@ -686,6 +691,7 @@ export const createServer = (
     peLoadConfig,
     peCertificates,
     peImports,
+    comTypelib,
     electronFuses,
     pythonPyc,
     webNetworkCapture,
@@ -928,6 +934,7 @@ const registerConfiguredAnalysisTools = (
     peLoadConfig,
     peCertificates,
     peImports,
+    comTypelib,
     pythonPyc,
     webNetworkCapture,
     artifactResources,
@@ -1033,6 +1040,13 @@ const registerConfiguredAnalysisTools = (
   registerPeImportsTool(
     server,
     peImports,
+    toolLogger,
+    recordEvidence,
+    withAdmittedAnalysis,
+  );
+  registerComTypelibTool(
+    server,
+    comTypelib,
     toolLogger,
     recordEvidence,
     withAdmittedAnalysis,
@@ -1201,6 +1215,7 @@ interface ServerToolContext extends ReturnType<typeof createSessionRecorders> {
   readonly peLoadConfig: PeLoadConfigService;
   readonly peCertificates: PeCertificatesService;
   readonly peImports: PeImportsService;
+  readonly comTypelib: ComTypelibService;
   readonly electronFuses: ElectronFuseService;
   readonly pythonPyc: PythonPycService;
   readonly webNetworkCapture: WebNetworkCaptureService;

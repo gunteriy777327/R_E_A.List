@@ -316,6 +316,19 @@ descriptors, and a pefile-compatible import hash of the standard import table.
 A missing import directory is observed absence of that table. See
 [PE import and delay-load tables](pe-imports.md).
 
+Inventory COM type libraries in a `.tlb`/`.olb` file or a DLL/EXE/OCX with
+embedded `TYPELIB` resources, without loading or registering the server:
+
+```bash
+rea inspect-com-typelib /absolute/path/to/automation.tlb --summary --json
+rea inspect-com-typelib /absolute/path/to/server.dll --type-name IApplication --code-page 1251 --json
+```
+
+The workflow reports libraries, coclasses, interfaces, dispinterfaces, enums,
+records and modules with their GUIDs, and optionally methods, DISPIDs,
+parameter types and default values. ProgIDs come from embedded `REGISTRY`
+registrar scripts. See [COM type libraries](com-typelib.md).
+
 Inspect ELF PT_NOTE and SHT_NOTE tables without executing the image:
 
 ```bash

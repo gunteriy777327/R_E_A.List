@@ -40,6 +40,13 @@ export const PE_IMPORTS_PROVIDER = Object.freeze({
   version: "1",
 } as const);
 
+/** Provider identity for portable, execution-free COM type-library decoding. */
+export const COM_TYPELIB_PROVIDER = Object.freeze({
+  id: "rea-com-typelib",
+  name: "REA COM type library parser",
+  version: "1",
+} as const);
+
 /** Provider identity for portable, execution-free ELF note-table decoding. */
 export const DEVICETREE_PROVIDER = Object.freeze({
   id: "rea-devicetree",
