@@ -132,6 +132,20 @@ table or overlay. Bound snapshots, loaded IAT contents, and export-forward
 resolution remain unobserved. See
 [PE import and delay-load tables](https://github.com/morluto/rea/blob/main/docs/pe-imports.md).
 
+## COM type libraries
+
+Use `inspect_com_typelib` for an explicit local `.tlb`/`.olb` file, or a
+DLL/EXE/OCX with embedded `TYPELIB` resources, when the question concerns an
+application's COM automation surface: coclasses, interfaces, dispinterfaces,
+methods, DISPIDs, parameter types, enums or ProgIDs. The server is not loaded,
+registered or called, and no Windows host is required. The CLI equivalent is
+`inspect-com-typelib PATH`. For large libraries, request `include_members:
+false` first and then `type_names` for the interfaces that matter. Preserve
+the library SHA-256 and file ranges, GUIDs, DISPIDs, and the reported string
+code page. ProgIDs come only from embedded REGISTRY registrar scripts; registry
+state and run-time class factories remain unobserved. See
+[COM type libraries](https://github.com/morluto/rea/blob/main/docs/com-typelib.md).
+
 ## PE TLS callbacks and load configuration
 
 Use `inspect_pe_load_config` for an explicit local PE32/PE32+ image when the

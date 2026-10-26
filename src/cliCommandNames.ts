@@ -72,6 +72,7 @@ export const CLI_COMMANDS = Object.freeze({
   inspectPeResources: "inspect-pe-resources",
   inspectPeCertificates: "inspect-pe-certificates",
   inspectPeImports: "inspect-pe-imports",
+  inspectComTypelib: "inspect-com-typelib",
   inspectNativeExports: "inspect-native-exports",
   inspectDevicetree: "inspect-devicetree",
   inspectElfNotes: "inspect-elf-notes",

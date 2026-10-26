@@ -1,0 +1,38 @@
+import "base.idl";
+[uuid(5B2A9D30-1C4E-4F6A-9B1D-2E3F4A5B6C7D), version(2.5), helpstring("Библиотека автоматизации DemoCad"), lcid(0x0419)]
+library DemoCad
+{
+  typedef [uuid(5B2A9D31-1C4E-4F6A-9B1D-2E3F4A5B6C7D), helpstring("Тип документа")] enum DocType { dtDrawing = 1, dtPart = 2, dtNegative = -5, dtLarge = 0x10000000 } DocType;
+  [uuid(5B2A9D32-1C4E-4F6A-9B1D-2E3F4A5B6C7D), object, oleautomation, helpstring("Document")]
+  interface IDocument : IUnknown {
+    [propget, id(1), helpstring("File name")] HRESULT Name([out, retval] BSTR *value);
+    [propput, id(1)] HRESULT Name([in] BSTR value);
+    [id(2)] HRESULT Save([in, defaultvalue("draft.cdw")] BSTR path, [in, optional, defaultvalue(1)] long flags, [out, retval] VARIANT_BOOL *ok);
+    HRESULT Items([out, retval] SAFEARRAY(double) *values);
+  };
+  [uuid(5B2A9D33-1C4E-4F6A-9B1D-2E3F4A5B6C7D), object, oleautomation]
+  interface IApplication : IUnknown {
+    HRESULT Open([in] DocType kind, [out, retval] IDocument **document);
+    HRESULT Matrix([in] double m[4][3]);
+  };
+  [uuid(5B2A9D35-1C4E-4F6A-9B1D-2E3F4A5B6C7D)]
+  dispinterface DApplicationEvents {
+    properties:
+      [id(1)] long Flags;
+    methods:
+      [id(2)] void Closed([in] IDocument *document);
+  };
+  [uuid(5B2A9D34-1C4E-4F6A-9B1D-2E3F4A5B6C7D), helpstring("Application object")]
+  coclass Application {
+    [default] interface IApplication;
+    interface IDocument;
+    [default, source] dispinterface DApplicationEvents;
+  };
+  [dllname("democad.dll")]
+  module Native {
+    [entry(5)] long Version();
+    [entry("DemoBuild")] long Build();
+  };
+  typedef struct Point { double x; double y; } Point;
+  typedef [public] long DocHandle;
+};

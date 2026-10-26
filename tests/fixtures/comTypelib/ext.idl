@@ -1,0 +1,11 @@
+import "base.idl";
+[uuid(7C1E0000-0000-4000-8000-000000000001), version(1.0)]
+library DemoExt
+{
+  importlib("stdole2.tlb");
+  [uuid(7C1E0000-0000-4000-8000-000000000002), dual, oleautomation, helpstring("Extension point")]
+  interface IExtension : IDispatch {
+    [id(10)] HRESULT Attach([in] IDispatch *host);
+    [id(11), propget] HRESULT Count([out, retval] long *count);
+  };
+};

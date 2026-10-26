@@ -46,6 +46,10 @@ import {
   peImportsSchema,
 } from "../../domain/native/peImports.js";
 import {
+  comTypelibSchema,
+  inspectComTypelibInputSchema,
+} from "../../domain/native/comTypelib.js";
+import {
   inspectElfNotesInputSchema,
   elfNotesSchema,
 } from "../../domain/native/elfNotes.js";
@@ -209,6 +213,29 @@ export const BINARY_DIAGNOSTICS_TOOL_CONTRACTS = [
       {
         title: "Inspect PE import and delay-load identities",
         input: { path: "/artifacts/application.exe" },
+      },
+    ],
+  },
+  {
+    name: "inspect_com_typelib",
+    ...toolContractMetadata("inspect_com_typelib"),
+    kind: "native-provider",
+    description:
+      "Inventory the COM type libraries in one explicit local .tlb/.olb file or PE32/PE32+ image (TYPELIB resources) without loading, registering or executing the server. Returns each library's LIBID, name, version, LCID and imports, and every type info: kind (coclass, interface, dispatch, enum, record, module, alias, union), GUID, flags, help strings, implemented and base interfaces, and optionally functions with DISPIDs/vtable offsets, invoke kinds, parameter types, flags and default values, plus enum and module constants. ProgID/CLSID pairs come from embedded REGISTRY registrar scripts and are joined to coclasses by GUID. Use include_members=false or type_names to bound large libraries. Registry state, run-time class factories and SLTG-format libraries remain unobserved. Malformed records are reported as partial coverage with issues; a non-typelib/non-PE input and exhausted member budgets return no partial success. Portable on supported Node hosts; no Windows, COM runtime or engine installation required.",
+    inputSchema: inspectComTypelibInputSchema,
+    outputSchema: evidenceResultOf(comTypelibSchema),
+    examples: [
+      {
+        title: "List coclasses and interfaces of a type library",
+        input: { path: "/artifacts/automation.tlb", include_members: false },
+      },
+      {
+        title: "Read members of selected interfaces in a COM server DLL",
+        input: {
+          path: "/artifacts/server.dll",
+          type_names: ["IApplication"],
+          code_page: 1251,
+        },
       },
     ],
   },
