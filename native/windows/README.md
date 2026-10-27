@@ -29,13 +29,29 @@ without this lane reports Windows native controls as unavailable.
 ## Restore the artifact in a source checkout
 
 The source tree omits `native/windows/build/` from Git. To run Windows
-provider-backed workflows from a checkout without the MinGW build lane, extract
+provider-backed workflows from a checkout without the MinGW build lane, restore
 the two files from the published `rea-agents` tarball whose version exactly
-matches the checkout's `package.json` version. Do not use `latest` or copy files
-from another REA version; the loader verifies the manifest version, ABI,
-architecture, and addon digest before it grants authority.
+matches the checkout's `package.json` version:
 
-From the checkout root, replace `<matching-version>` with the `version` in
+```sh
+npm run restore:windows-native
+npm run verify:windows-native:artifact
+```
+
+The command is explicit and opt-in; nothing else fetches the artifact. It reads
+the registry metadata for exactly `package.json`'s version (never `latest`),
+checks the downloaded tarball against the registry `sha512` integrity, extracts
+only `manifest.json` and `rea-windows-x64.node` (other entries are never
+written), and admits them with the loader's own version, ABI, architecture and
+SHA-256 rules before replacing the build directory's files. A valid existing
+pair is left unchanged unless `-- --force` is passed. The registry follows
+`npm_config_registry` when run through npm. An unpublished version fails;
+build it with the Linux/MinGW lane above instead.
+
+The published addon matches the checkout only while `native/windows/src/` is
+unchanged from that release. After changing native sources, rebuild instead.
+
+Manual equivalent, replacing `<matching-version>` with the `version` in
 `package.json`:
 
 ```sh
@@ -45,9 +61,6 @@ mkdir -p native/windows/build
 cp package/native/windows/build/manifest.json native/windows/build/
 cp package/native/windows/build/rea-windows-x64.node native/windows/build/
 ```
-
-This is a manual recovery step. REA does not fetch or install the artifact
-automatically. Alternatively, build it using the Linux/MinGW lane above.
 
 ## Boundaries
 

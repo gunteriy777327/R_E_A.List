@@ -120,6 +120,20 @@ For MCP, register the resolved Node entry point and the same provider settings:
 }
 ```
 
+A source checkout (for example a fork clone) does not contain the native
+addon, so `rea doctor` reports Windows native controls as `runtime_missing`.
+Restore the addon that matches the checkout's version before building:
+
+```powershell
+npm ci
+npm run restore:windows-native
+npm run build
+node scripts/rea.mjs doctor --json
+```
+
+See [restoring the artifact](../native/windows/README.md#restore-the-artifact-in-a-source-checkout)
+for the checks it applies.
+
 These paths are examples. Use the actual package location and restart the MCP
 client after registration changes. Cold Ghidra import can exceed a client's
 short default request timeout; the real verification lane allows the existing
